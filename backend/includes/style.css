@@ -1,0 +1,636 @@
+/* 
+	Theme Name: Noelinho
+	Theme URL: http://www.noelinho.org/sassenach-cms/
+	Description: A backend style for Noel's personal website content management system
+	Author: Noel Thomas Slevin
+	Author URI: http://www.noelinho.org
+	Version: 0.8
+		
+	The CSS, XHTML and design is released under GPL:
+	http://www.opensource.org/licenses/gpl-license.php
+	
+	Changelog:
+		v0.1a - 2007-12-09
+			First attempt at style build
+			
+		v0.1b - 2008-01-26
+			Added new styles for forms
+		
+		v0.8  - 2008-07-20
+			Added links styles, almost complete
+*/
+
+
+
+/* Body */
+
+body {
+	font-size: 12px;
+	font-family: Arial, Verdana, Tahoma;
+	margin: 0 auto;
+	padding: 0;
+	}
+
+
+
+/* Navbar */
+
+#navbar {
+	background: #333333;
+	width: 960px;
+	margin: 0px auto 0px;
+	padding: 5px 0px 5px 0px;
+	}
+	
+#navbar li {
+	display: inline;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	}
+		
+#navbar ul {
+	margin: 0px;
+	padding: 0px 0px 0px 10px;
+	}
+	
+#navbar ul li a {
+	font-family: Arial, Helvetica, Sans-Serif;
+	font-size: 12px;
+	color: #FFFFFF;
+	padding: 5px 10px 5px 10px;
+	margin: 0px;
+	text-decoration: none;
+	text-transform: uppercase;
+	font-weight: bold;
+	}
+
+#navbar ul li a:hover {
+	background: #680000;
+	color: #FFFFFF;
+	text-decoration: underline;
+	}
+
+
+
+/* Page */
+
+#page {
+	width: 960px;
+	border: 5px double #000000;
+	margin: 10px auto 10px;
+	padding: 0;
+	}
+
+
+
+/* Content */
+
+#content {
+	width: 960px;
+	margin: 0px auto 0px;
+	padding: 0 0 10px 0;
+	}
+
+#content p {
+	margin-top: 10px;
+	line-height: 20px;
+	text-align: justify;
+	}
+	
+#content p img{
+	float: left;
+	border: none;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	}
+
+#content h1 {
+	color: #000000;
+	font-size: 24px;
+	font-family: Arial, Verdana, Tahoma;
+	font-weight: normal;
+	padding: 10px 0px 10px 0px;
+	margin: 0;
+	text-transform: capitalize;
+	}
+
+#content ul li {
+	list-style-type: square;
+	padding-bottom: 8px;
+	}
+
+#content #wrap {
+	margin-left: 15px;
+	margin-right: 15px;
+	}
+	
+#content blockquote{
+	margin: 0px 20px 15px 20px;
+	padding: 5px 5px 5px 5px;
+	color: #FFFFFF;
+	border: 1px solid #000000;
+	background-color: #707070;
+	}
+	
+#content blockquote p{
+	margin: 0px 0px 0px 0px;
+	padding: 0px;
+	text-align: justify;
+	}
+
+#popup img {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+
+/* Forms */
+
+form#write textarea {
+	width: 600px;
+	height: 400px;
+	}
+
+form#write {
+	width: 900px;
+	}
+
+#categories {
+	float: right;
+	margin-right: 10px;
+	width: 250px;
+	}
+	
+form#write input#title {
+	border:1px solid #000000;
+	background:#ffffff;
+	width: 500px;
+	}
+
+#status {
+  float: right;
+  margin-right: 10px;
+  width: 250px;
+}
+	
+form#write legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	}
+	
+	form#write fieldset {
+	width:880px;
+	display:block;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	border: 1px solid #FFFFFF;
+	}
+
+form#write label {
+	clear:left;
+	display:block; 
+	float:left;
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+/* Register a User */
+
+form#newuser {
+	background:#bebebe;
+	width:400px;
+	padding:10px;
+	border:1px solid #000;
+	}
+
+form#newuser fieldset {
+	width:375px;
+	display:block;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	}
+
+form#newuser legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	width:254px;
+	}
+
+form#newuser label {
+	clear:left;
+	display:block; 
+	float:left; 
+	width:100px;
+	text-align:right;
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+form#newuser input {
+	border:1px solid #000000;
+	background:#ffffff;
+	margin-bottom:0.6em;
+	}
+
+
+/* To-Do List */
+
+form#todo {
+	background:#bebebe;
+	width:600px;
+	padding:10px;
+	border:1px solid #000000;
+	}
+
+form#todo fieldset {
+	width:575px;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	}
+
+form#todo legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	}
+
+form#todo label {
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+form#todo input {
+	border:1px solid #000000;
+	background:#ffffff;
+	margin-bottom:0.6em;
+	}
+	
+form#todo textarea {
+	width:450px;
+	height:15em;
+	border:1px solid #000000;
+	padding:0.5em;
+	overflow:auto;
+	background:#ffffff;
+	}
+	
+/* Insert New Link */
+	
+form#newlink {
+	background:#bebebe;
+	width:550px;
+	padding:10px;
+	border:1px solid #000000;
+	}
+
+form#newlink fieldset {
+	width:525px;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	}
+
+form#newlink legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	}
+
+form#newlink label {
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+form#newlink input {
+	border:1px solid #000000;
+	background:#ffffff;
+	margin-bottom:0.6em;
+	}
+
+/* Insert New Category */
+	
+form#newcategory {
+	background:#bebebe;
+	width:550px;
+	padding:10px;
+	border:1px solid #000000;
+	}
+
+form#category fieldset {
+	width:525px;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	}
+
+form#newcategory legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	}
+
+form#newcategory label {
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+form#newcategory input {
+	border:1px solid #000000;
+	background:#ffffff;
+	margin-bottom:0.6em;
+	}
+
+/* Comments Form */
+
+form#comment {
+	background:#bebebe;
+	width:450px;
+	padding:10px;
+	border:1px solid #000000;
+	}
+
+form#comment fieldset {
+	width:425px;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	}
+
+form#comment legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	}
+
+form#comment label {
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+form#comment input {
+	border:1px solid #000000;
+	background:#ffffff;
+	margin-bottom:0.6em;
+	}
+	
+form#comment textarea {
+	width:285px;
+	height:15em;
+	border:1px solid #000000;
+	padding:0.5em;
+	overflow:auto;
+	background:#ffffff;
+	}
+
+
+/* Login Form */
+
+form#login {
+	background:#bebebe;
+	width:400px;
+	padding:10px;
+	border:1px solid #000000;
+	margin-top: 10px;
+	}
+
+form#login fieldset {
+	width:375px;
+	padding:5px;
+	font-family:verdana, sans-serif;
+	margin-bottom:0.5em;
+	line-height:1.5em;
+	}
+
+form#login legend {
+	font-family: sans-serif;
+	font-size:1.1em;
+	font-weight:bold;
+	border:3px solid #fff;
+	margin-bottom:5px;
+	padding:3px;
+	}
+
+form#login label {
+	padding-right:10px;
+	color:#000000;
+	margin-bottom:5px;
+	font-weight: bold;
+	}
+
+form#login input {
+	border:1px solid #000000;
+	background:#ffffff;
+	margin-bottom:0.6em;
+	}
+
+/* Tables */
+
+table {
+	border-width: 1px 1px 1px 1px;
+	border-spacing: 1px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	border-collapse: separate;
+	background-color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+table td {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px 5px 5px 5px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	background-color: #bebebe;
+	-moz-border-radius: 0px 0px 0px 0px;
+	font-weight:normal;
+}
+
+table.todo {
+	border-width: 1px 1px 1px 1px;
+	border-spacing: 1px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	border-collapse: separate;
+	background-color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+table.todo td {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px 5px 5px 5px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	background-color: #bebebe;
+	-moz-border-radius: 0px 0px 0px 0px;
+	font-weight:normal;
+}
+
+table.newlink {
+	border-width: 1px 1px 1px 1px;
+	border-spacing: 1px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	border-collapse: separate;
+	background-color: white;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+table.newlink td {
+	border-width: 1px 1px 1px 1px;
+	padding: 5px 5px 5px 5px;
+	border-style: solid solid solid solid;
+	border-color: black black black black;
+	background-color: #bebebe;
+	-moz-border-radius: 0px 0px 0px 0px;
+	font-weight:normal;
+}
+
+#tinymce {
+  width: 900px;
+  border: 1px solid #000000;
+  background-color: #c8c8c8;
+  padding: 5px;
+}
+
+.center {
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Links */
+
+a:link {
+	text-decoration: none;
+	color: #0000FF;
+}
+
+a:visited {
+	text-decoration: none;
+	color: #0000FF;
+}
+
+a:hover {
+	text-decoration: underline;
+	color: #0000FF;
+}
+
+a:active {
+	color: #FF0000;
+}
+
+/* Dashboard */
+
+#dashboard {
+	background: #0d0030;
+	width: 100%;
+	margin: 0px auto 0px;
+	padding: 5px 0px 5px 0px;
+	}
+		
+#dashboard ul {
+	margin: 0px;
+	padding: 0px 0px 0px 10px;
+	}
+
+#dashboard li {
+	display: inline;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	}
+	
+#dashboard ul li a {
+	color: #FFFFFF;
+	padding: 5px 20px 5px 20px;
+	margin: 0px;
+	text-decoration: none;
+	text-transform: capitalize;
+	font-weight: bold;
+	}
+
+#dashboard ul li a:hover {
+	background: #0000ff;
+	color: #FFFFFF;
+	text-decoration: underline;
+	}
+
+#sub_dashboard {
+	background: #0d0030;
+	width: 100%;
+	margin: 0px auto 0px;
+	padding: 5px 0px 5px 0px;
+	}
+
+#sub_dashboard ul {
+	text-align: right;
+	margin: 0px;
+	padding: 0px 0px 0px 10px;
+	}
+
+#sub_dashboard ul li {
+	display: inline;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+	}
+
+#sub_dashboard ul li a {
+	color: #FFFFFF;
+	padding: 5px 20px 5px 20px;
+	margin: 0px;
+	text-decoration: none;
+	text-transform: capitalize;
+	font-weight: bold;
+	}
+
+#sub_dashboard ul li a:hover {
+	background: #0000ff;
+	color: #FFFFFF;
+	text-decoration: underline;
+	}

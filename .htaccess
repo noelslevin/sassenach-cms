@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule \.(css|jpe?g|gif|png)$ - [L]
+RewriteCond %{REQUEST_URI} ^/[^\.]+[^/]$
+RewriteRule ^(.*)$ http://%{HTTP_HOST}/$1/ [R=301,L]
+RewriteRule ^backend/ - [L]
+RewriteRule ^actions/ - [L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^([0-9]{4})/?$ index.php?year=$1 [L]
+RewriteRule ^([0-9]{4})/([0-9]{2})/?$ index.php?year=$1&month=$2 [L]
+RewriteRule ^([0-9]{4})/([0-9]{2})/([0-9]{2})/?$ index.php?year=$1&month=$2&date=$3 [L]
+RewriteRule ^([0-9]{4})/([0-9]{2})/([0-9]{2})/([^/\.]+)/?$ index.php?year=$1&month=$2&date=$3&title=$4 [L]
+RewriteRule ^category/([^/\.]+)/?$ index.php?category=$1 [L]
+RewriteRule ^([^/\.]+)/?$ index.php?page=$1 [L]
+RewriteRule ^([^/\.]+)/([^/\.]+)/?$ index.php?page=$1&subpage=$2 [L]
+</IfModule>
