@@ -44,7 +44,7 @@ if (isset($_POST['submit'])) {
 			else {
 				echo "<p>Could not write to file. You either need to make the connection file writeable, go back to the previous page and try again, or you should upload the file yourself. If you want to upload the file yourself, then copy the following text box into a plain text editor, save it as \"connection.php\" and upload it to \"includes/\" directory at the root of your Sassnenach installation.</p>\n\n";
 				
-				echo "<textarea cols=\"60\" rows=\"11\" id=\"description\" readonly=\"readonly\"><?php\n\n\$dbusername = \"root\";\n\$dbpassword = \"visolicnes5@BAT/\"\n\$dbhostname = \"localhost\";\n\n\$dbh = @mysql_connect(\$dbhostname, \$dbusername, \$dbpassword)\nor die (\"Unable to connect to MySQL.\");\nmysql_select_db (busy_sassenach)\n\n?></textarea>";
+				echo "<textarea cols=\"60\" rows=\"11\" id=\"description\" readonly=\"readonly\"><?php\n\n\$dbusername = \"$db_user\";\n\$dbpassword = \"$db_password\"\n\$dbhostname = \"$db_hostname\";\n\n\$dbh = @mysql_connect(\$dbhostname, \$dbusername, \$dbpassword)\nor die (\"Unable to connect to MySQL.\");\nmysql_select_db ($db_name)\n\n?></textarea>";
 				
 				echo "<p>So, either go back and try again, having made the file writeable, or upload the file yourself and <a href=\"test_connection.php\">confirm this</a> so that we can make sure that everything has worked properly!.</p>";
 				}

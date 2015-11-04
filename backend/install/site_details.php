@@ -22,9 +22,11 @@ if (isset($_POST['submit'])) {
 	$result = @mysql_query($query);
 	$result2 = @mysql_query($query2);
 	if ($result && $result2) {
-		echo "<p>The details were successfully updated.</p>";
-		echo "<p><a href=\"new_user.php\">Continue</a></p>";
+		echo "<p>The details were successfully updated in the database.</p>";
 		include ('write_variables.php');
+        if ($fp) {
+            echo "<p><a href=\"new_user.php\">Continue</a></p>";
+        }
 		}
 	else {
 		echo "<p>The variables were not set. Have you really set up the database connection and filled the database?";
