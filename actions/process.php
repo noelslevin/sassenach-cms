@@ -3,36 +3,31 @@
 if (isset($_POST['login'])) {
 	require_once ('../includes/variables.php');
 	require_once ('../includes/connection.php');
-	function escape_data ($data) {
-		global $dbh;
-		if (ini_get('magic_quotes_gpc')) {
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data, $dbh);
-	}
+
 	$message = NULL;
-	if (empty($_POST['username'])) {
+	
+    if (empty($_POST['username'])) {
 		$username = FALSE;
 		$message .= "<p>You forgot to enter your username!</p>\n";
-	} else {
-		$username = $_POST['username'];
-
 	}
+    
+    else {
+		$username = $_POST['username'];
+	}
+    
 	if (empty($_POST['password'])) {
 		$password = FALSE;
 		$message .= "<p>You forgot to enter your password!</p>\n";
-	} else {
+	}
+    
+    else {
         $password = $_POST['password'];
     }
 	
-	if ($username && $password) { // If everything's OK.
+	if ($username && $password) {
         $database->query('SELECT user_id, username, password FROM users WHERE username = :username');
-        $database->bind(':username', '$username');
+        $database->bind(':username', $username);
         $row = $database->single();
-        
-        //$query = "SELECT user_id, username, password FROM users WHERE username = '$username'";
-        //$result = @mysql_query($query);
-        //$row = mysql_fetch_array ($result, MYSQL_ASSOC);
         if ($row) {
             if (password_verify($_POST['password'], $row['password'])) {
                 session_start();
@@ -48,7 +43,6 @@ if (isset($_POST['login'])) {
         else {
             $message .= "<p>Nothing returned from the database.</p>";
         }
-        mysql_close();
 	} else {
 		$message .= "<p>Please try again.</p>\n";		
 	}
