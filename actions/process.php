@@ -15,38 +15,47 @@ if (isset($_POST['login'])) {
 		$username = FALSE;
 		$message .= "<p>You forgot to enter your username!</p>\n";
 	} else {
-		$username = escape_data($_POST['username']);
+		$username = $_POST['username'];
 
 	}
 	if (empty($_POST['password'])) {
 		$password = FALSE;
 		$message .= "<p>You forgot to enter your password!</p>\n";
 	} else {
-		$password = escape_data($_POST['password']);
-		$password = md5($password);
-	}
+        $password = $_POST['password'];
+    }
 	
 	if ($username && $password) { // If everything's OK.
-		$query = "SELECT user_id, username FROM users WHERE username='$username' AND password='$password'";		
-		$result = @mysql_query ($query);
-		$row = mysql_fetch_array ($result, MYSQL_NUM); 
-		if ($row) { 
-				
-				// Start the session, register the values & redirect.
-				session_start();
-				$_SESSION['username'] = $row[1];
-				$_SESSION['user_id'] = $row[0];
-
-				header ("Location:  $globalhome$backend");
+        $database->query('SELECT user_id, username, password FROM users WHERE username = :username');
+        $database->bind(':username', '$username');
+        $row = $database->single();
+        
+        //$query = "SELECT user_id, username, password FROM users WHERE username = '$username'";
+        //$result = @mysql_query($query);
+        //$row = mysql_fetch_array ($result, MYSQL_ASSOC);
+        if ($row) {
+            if (password_verify($_POST['password'], $row['password'])) {
+                session_start();
+                $_SESSION['user_id'] = $row['user_id'];
+				$_SESSION['username'] = $row['username'];
+                header ("Location:  $globalhome$backend");
 				exit();
-				
-		} else {
-			$message .= "<p>The username and password do not match those on the database.</p>\n";
-		}
-		mysql_close();
+            }
+            else {
+                $message .= "<p>The username and password do not match those on the database.</p>\n";
+            }
+        }
+        else {
+            $message .= "<p>Nothing returned from the database.</p>";
+        }
+        mysql_close();
 	} else {
 		$message .= "<p>Please try again.</p>\n";		
 	}
+}
+
+if (isset($message)) {
+    echo $message;
 }
 
 ?>

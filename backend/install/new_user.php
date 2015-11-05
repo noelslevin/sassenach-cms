@@ -53,7 +53,7 @@ if (isset($_POST['submit'])) {
 	} else {
 		if ($_POST['password'] == $_POST['password2']) {
 			$password = addslashes($_POST['password']);
-			$password = md5($password);
+			$password = password_hash($password, PASSWORD_DEFAULT);
 
 		} else {
 			$password = FALSE;
