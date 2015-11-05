@@ -37,7 +37,7 @@ if (isset($_POST['submit'])) {
   PRIMARY KEY  (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `url` (`url`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3");
+) ENGINE=INNODB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3");
 	echo "<p>Creating table 'categories': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -88,7 +88,7 @@ if (isset($_POST['submit'])) {
   `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
   `comment` longtext NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 	echo "<p>Creating table 'comments': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -123,7 +123,7 @@ $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `files` (
   `filesize` varchar(10) NOT NULL default '',
   `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 	echo "<p>Creating table 'files': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -156,7 +156,7 @@ $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `files` (
   `link` varchar(255) NOT NULL default '',
   `category` mediumint(8) NOT NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2");
+) ENGINE=INNODB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2");
 	echo "<p>Creating table 'links': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -203,7 +203,7 @@ $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `files` (
   `function` longtext NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `variable` (`variable`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20");
+) ENGINE=INNODB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20");
 	echo "<p>Creating table 'options': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -276,7 +276,7 @@ $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `files` (
   `content` longtext NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `url` (`url`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 	echo "<p>Creating table 'pages': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -313,9 +313,8 @@ $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `posts` (
   `url` varchar(100) NOT NULL default '',
   `title` text NOT NULL,
   `content` longtext NOT NULL,
-  PRIMARY KEY  (`post_id`),
-  FULLTEXT KEY `content_index` (`content`,`title`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+  PRIMARY KEY  (`post_id`)
+) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 echo "<p>Creating table 'posts': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -351,7 +350,7 @@ $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `todo` (
   `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',
   `updated` datetime NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 echo "<p>Creating table 'todo': ";
 	if ($db_insert) {
 		$score = $score+1;
@@ -378,17 +377,17 @@ echo "<p>Dropping table 'users': ";
 
 
 $db_insert = mysql_query("CREATE TABLE IF NOT EXISTS `users` (
+  `user_id` mediumint(8) unsigned NOT NULL auto_increment,
   `firstname` varchar(20) NOT NULL default '',
   `lastname` varchar(20) NOT NULL default '',
   `username` varchar(20) NOT NULL default '',
-  `password` varchar(32) NOT NULL default '',
+  `password` varchar(255) NOT NULL default '',
   `email` varchar(40) NOT NULL default '',
   `registered` datetime NOT NULL default '0000-00-00 00:00:00',
-  `user_id` mediumint(8) unsigned NOT NULL auto_increment,
   `string` char(32) NULL,
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1");
+) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1");
 echo "<p>Creating table 'users': ";
 	if ($db_insert) {
 		$score = $score+1;
