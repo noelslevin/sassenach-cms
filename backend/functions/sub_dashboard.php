@@ -12,7 +12,7 @@ if (!function_exists('sub_dashboard')) {
             $parsedpart = $parts[1];
         }
         else {
-            $parsedpart = 'dashboard';
+            $parsedpart = 'user';
         }
         
         $subdashdata .= "<div id=\"sub_dashboard\">\n";
@@ -28,14 +28,14 @@ if (!function_exists('sub_dashboard')) {
         elseif ($parsedpart == 'config') {
             $subpages = array('users', 'variables', 'php-config');
         }
-        elseif ($parsedpart == 'dashboard') {
+        elseif ($parsedpart == 'user') {
             $subpages = array('profile');
         }
         
         if (isset($subpages)) {
             $subdashdata .= "<ul>\n";
             foreach ($subpages as $subpage) {
-                $subdashdata .= "<li><a href=\"".$globalhome.$backend.$parts[1]."/".$subpage."\">".$subpage."</a></li>\n";
+                $subdashdata .= "<li><a href=\"".$globalhome.$backend.$parsedpart."/".$subpage."\">".$subpage."</a></li>\n";
             }
             $subdashdata .= "</ul>\n";
         }
