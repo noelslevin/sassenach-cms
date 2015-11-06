@@ -3,39 +3,47 @@
 if (!function_exists('sub_dashboard')) {
 	function sub_dashboard() {
 		
-		global $globalhome, $backend, $write, $manage, $help, $options, $page;
-		echo "<div id=\"sub_dashboard\">
-		<ul>\n";
-		if ($page == 'write') {
-			echo "<li><a href=\"".$globalhome.$backend.$page."/post.php\">Post</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/page.php\">Page</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/link.php\">Link</a></li>\n";
-			}
-		else if ($page == 'manage') {
-			echo "<li><a href=\"".$globalhome.$backend.$page."/posts.php\">Posts</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/pages.php\">Pages</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/links.php\">Links</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/comments.php\">Comments</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/files.php\">Files</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/categories.php\">Categories</a></li>\n";
-			}
-		else if ($page == 'config') {
-			echo "<li><a href=\"".$globalhome.$backend.$page."/users.php\">Users</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/variables.php\">Variables</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/phpinfo.php\">PHP Config</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/write_variables.php\">Write Variables</a></li>
-			<li><a href=\"".$globalhome.$backend.$page."/console.php\">Console</a></li>\n";
-			echo "<li><a href=\"".$globalhome.$backend.$options."profile.php\">Profile</a></li>\n";
-			}			
-		else if ($page == NULL) {
-			echo "<li><a href=\"".$globalhome.$backend.$options."profile.php\">Profile</a></li>\n";
-			}
-		echo "</ul>
-		</div>\n";
-		
-		}
-	}
+        $subdashdata = NULL;
+        $subpages = NULL;
+        $parsedpart = NULL;
+		global $globalhome, $backend, $write, $manage, $help, $options, $parts;
+        
+        if (isset($parts[1])) {
+            $parsedpart = $parts[1];
+        }
+        else {
+            $parsedpart = 'dashboard';
+        }
+        
+        $subdashdata .= "<div id=\"sub_dashboard\">\n";
+        if ($parsedpart == 'write') {
+            $subpages = array('post', 'page', 'link');
+        }
+        elseif ($parsedpart == 'manage') {
+            $subpages = array('posts', 'pages', 'links', 'comments', 'files', 'categories');
+        }
+        elseif ($parsedpart == 'documentation') {
+
+        }
+        elseif ($parsedpart == 'config') {
+            $subpages = array('users', 'variables', 'php-config');
+        }
+        elseif ($parsedpart == 'dashboard') {
+            $subpages = array('profile');
+        }
+        
+        if (isset($subpages)) {
+            $subdashdata .= "<ul>\n";
+            foreach ($subpages as $subpage) {
+                $subdashdata .= "<li><a href=\"".$globalhome.$backend.$parts[1]."/".$subpage."\">".$subpage."</a></li>\n";
+            }
+            $subdashdata .= "</ul>\n";
+        }
+        $subdashdata .= "</div>\n";
+        echo $subdashdata;
+    }
+}
 
 sub_dashboard();
-
+        
 ?>
