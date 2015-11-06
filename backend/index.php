@@ -15,29 +15,32 @@ function get_sassenach_function($function) {
 
 include '../includes/variables.php';
 include '../includes/connection.php';
+$pagetitle = $sitename;
 
-if (isset($_GET['page'])) { // If accessing a top-level admin page
-	$page = $_GET['page'];
-	$pagetitle = $sitename.": Backend: ".ucwords($page);
-	if (isset($_GET['subpage'])) { // If accessing a secondary-level admin page
-		$subpage = $_GET['subpage'];
-		$pagetitle .= ": ".ucwords(preg_replace ("/_/", " ", $_GET['subpage']));
-		get_sassenach_function('backend_header');
-		echo "<h1>".$sitename.": ".ucwords($page).": ".ucwords(preg_replace ("/_/", " ", $_GET['subpage']))."</h1>\n";
-		@include $page."/".$subpage.".php";
-		}
-	else {
-		get_sassenach_function('backend_header');
-		echo "<h1>".$sitename.": ".ucwords($page)."</h1>\n";
-		include $page."/index.php";
-		}
-	}
-else { // If directly accessing the admin page
-	$pagetitle = $sitename.": Backend";
-	get_sassenach_function('backend_header');
-	echo "<h1>".$sitename.": Dashboard</h1>
-	<p>Welcome back, ".$_SESSION['username'].".</p>\n";
-	}
+if (isset($_GET['page'])) {
+	$page = rtrim($_GET['page'], "/");
+    $parts = explode("/", $page);
+    if (count($parts) == 1) {
+        $pagetitle .= ": Backend";
+        get_sassenach_function('backend_header');
+        echo "<h1>".$sitename.": Dashboard</h1>
+        <p>Welcome back, ".$_SESSION['username'].".</p>\n";
+    }
+    
+    elseif (count($parts) == 2) {
+        $pagetitle .= ": Backend: ".ucwords($parts[1]);
+        get_sassenach_function('backend_header');
+        echo "<h1>".$sitename.": ".ucwords($parts[1])."</h1>\n";
+        include $parts[1].'/index.php';
+    }
+    elseif (count($parts) == 3) {
+        $pagetitle .= ": Backend: ".ucwords($parts[1]).": ".ucwords($parts[2]);
+        get_sassenach_function('backend_header');
+        echo "<h1>".$sitename.": ".ucwords($parts[1]).": ".ucwords($parts[2])."</h1>\n";
+        include $parts[1].'/'.$parts[2].'.php';
+    }
+
+}
 
 get_sassenach_function('backend_footer');
 
