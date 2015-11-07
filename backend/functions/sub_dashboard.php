@@ -26,7 +26,7 @@ if (!function_exists('sub_dashboard')) {
 
         }
         elseif ($parsedpart == 'config') {
-            $subpages = array('users', 'variables', 'php-config');
+            $subpages = array('users', 'variables');
         }
         elseif ($parsedpart == 'user') {
             $subpages = array('profile');
