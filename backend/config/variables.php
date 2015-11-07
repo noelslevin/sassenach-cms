@@ -1,106 +1,64 @@
 <?php
 
+$message = NULL;
+
 if (isset($_POST['variablesubmit'])) {
-
-	// Create a function for escaping the data.
-	function escape_data ($data) {
-		global $dbh; // Need the connection.
-		if (ini_get('magic_quotes_gpc')) {
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data, $dbh);
-	} // End of function.
-
-	$message = NULL; // Create an empty new variable.
 
 	if (empty($_POST['variable'])) {
 		$variable = FALSE;
 		$message .= '<p>Your variable needs a name.</p>';
 	} 
-	
 	else {
-		$variable = escape_data($_POST['variable']);
+		$variable = trim($_POST['variable']);
 	}
 	
 	if (empty($_POST['value'])) {
 		$value = FALSE;
 		$message .= '<p>Your variable needs a value.</p>';
 	} 
-	
 	else {
-		$value = escape_data($_POST['value']);
+		$value = trim($_POST['value']);
 	}
 	
 	if (empty($_POST['function'])) {
 		$function = FALSE;
 		$message .= '<p>Your variable needs an explanation.</p>';
 	} 
-	
 	else {
-		$function = escape_data($_POST['function']);
+		$function = trim($_POST['function']);
 	}
 	
 	if ($variable && $value && $function) {
-	
-		$query = "INSERT INTO options (variable, value, function) VALUES ('$variable', '$value', '$function')";
-		$result = @mysql_query ($query);
-		if ($result) { // If it ran OK.
-		
-			echo "<p>Your task was successfully entered into the database.</p>\n";
-
-			$query = "SELECT * FROM options ORDER BY id ASC";
-			$result = @mysql_query($query);
-			if ($result) {
-			
-				echo "<table class=\"todo\">
-				<tr>
-				<td><strong>Variable</strong></td>
-				<td><strong>Value</strong></td>
-				<td><strong>Function</strong></td>
-				</tr>\n";
-				
-				while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-					echo "<tr>
-					<td>".$row['variable']."</td>
-					<td>".$row['value']."</td>
-					<td>".$row['function']."</td>
-					</tr>\n";
-
-				}
-
-				echo "</table>\n";
-
-			}			
-
-			include '../includes/footer.php';
-			exit();
-			
-		} 
-		
+        $database->query('INSERT INTO `options` (`variable`, `value`, `function`) VALUES (:variable, :value, :function)');
+        $database->bind(':variable', $variable);
+        $database->bind(':value', $value);
+        $database->bind(':function', $function);
+        $database->execute();
+        
+        if ($database-rowCount() == 1) {
+			$message .= "<p>Your task was successfully entered into the database.</p>\n";
+        }
 		else {
-			$message = "<p>Your database submission was unsuccessful. Details are given below.</p><p>" . mysql_error() . "</p>\n";
+			$message .= "<p>Your database submission was unsuccessful. Details are given below.</p><p>" . mysql_error() . "</p>\n";
 		}
-		
-		mysql_close();
-
 	}
-	
 	 else {
 		$message .= "<p>Please rectify these issues before re-submitting.</p>";
 	}
-	
+} // End of variablesubmit condition
+
+if (isset($message)) {
+    echo $message;
 }
 
 echo "<p>You can use this page to update options that affect your Sassenach CMS installation, from where uploads are stored, to the active theme, and even to how permalinks are implemented. Information about each of these variables is avaliable in your documentation.</p>
 
 <p>Once these are updated in the database, you can <a href=\"write_variables.php\">write them</a> to the variables file.</p>\n";
 
+$database->query('SELECT * FROM `options` ORDER BY `id` ASC');
+$rows = $database->resultSet();
 
-$query = "SELECT * FROM options ORDER BY id ASC";
-$result = @mysql_query($query);
-if ($result) {
-
+if ($database->rowCount() > 0) {
 	echo "<strong>Current Variables</strong><br/>
 	<table class=\"todo\">
 	<tr>
@@ -109,23 +67,19 @@ if ($result) {
 	<td><strong>Function</strong></td>
 	<td><strong>Edit</strong></td>
 	</tr>\n";
-	
-	while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
+    
+    foreach ($rows as $row) {
 		echo "<tr>
 		<td>".$row['variable']."</td>
 		<td>".$row['value']."</td>
 		<td>".$row['function']."</td>
 		<td><a href=\"edit.php?id=".$row['id']."\">Edit</a></td>
 		</tr>\n";
-
 	}
-	
 	echo "</table>\n\n";
-
 }
 				
-echo "<form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\" id=\"todo\">
+echo "<form action=\"/".$page."\" method=\"post\" id=\"todo\">
 
 <fieldset>
 

@@ -1,75 +1,57 @@
-<h1>Links</h1>
-
 <?php
 
+echo "<h1>Links</h1>\n";
+
+$message = NULL;
+
 if (isset($_POST['submitnewcategory'])) { // Handle the form.
-
-	// Create a function for escaping the data.
-	function escape_data ($data) {
-		global $dbh; // Need the connection.
-		if (ini_get('magic_quotes_gpc')) {
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data, $dbh);
-	} // End of function.
-
-	$message = NULL; // Create an empty new variable.
 	
 	// Check the link has a title.
 	if (empty($_POST['newcategory'])) {
 		$newcategory = FALSE;
 		$message .= '<p>Your new category needs a name.</p>';
-	} else {
-		$newcategory = ($_POST['newcategory']);
+	}
+    else {
+		$newcategory = trim($_POST['newcategory']);
 	}
 	
 	$type = ($_POST['newcategorytype']);
 	$parent = ($_POST['parent']);
-	
-$categorysubmission = "INSERT INTO categories (name, parent, type) VALUES ('$newcategory', '$parent', '$type')";
-$result = @mysql_query ($categorysubmission);
-if ($result) {
-
-echo "The new category has been added to the database.<br/><br/>";
-
-}
-
-else {
-
-echo "<p>The new category has not been added to the database.", $message."</p>";
-echo "<blockquote><p>".mysql_error()."</p></blockquote>";
-
-}
-
-}
+    
+    if ($newcategory && $type && $parent) {
+    
+        $database->query('INSERT INTO `categories` (`name`, `parent`, `type`) VALUES (:newcategory, :parent, :type)');
+        $database->bind(':newcategory', $newcategory);
+        $database->bind(':parent', $parent);
+        $database->bind(':type', $type);
+        $database->execute();
+        if ($database->rowCount() == 1) {
+            echo "The new category has been added to the database.<br/><br/>";
+        }
+        else {
+            echo "<p>The new category has not been added to the database.", $message."</p>";
+        }
+    }
+} // End of submitnewcategory conditional
 
 if (isset($_POST['submitnewlink'])) { // Handle the form.
-
-	// Create a function for escaping the data.
-	function escape_data ($data) {
-		global $dbh; // Need the connection.
-		if (ini_get('magic_quotes_gpc')) {
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data, $dbh);
-	} // End of function.
-
-	$message = NULL; // Create an empty new variable.
 	
 	// Check the link has a title.
 	if (empty($_POST['linkname'])) {
 		$linkname = FALSE;
 		$message .= '<p>Your link needs a name.</p>';
-	} else {
-		$linkname = escape_data($_POST['linkname']);
+	} 
+    else {
+		$linkname = trim($_POST['linkname']);
 	}
 	
 	// Check the link has an address.
 	if (empty($_POST['linkurl'])) {
 		$linkurl = FALSE;
 		$message .= '<p>Your link needs an address.</p>';
-	} else {
-		$linkurl = escape_data($_POST['linkurl']);
+	}
+    else {
+		$linkurl = trim($_POST['linkurl']);
 	}
 	
 	// Check the link has a description.
@@ -77,64 +59,44 @@ if (isset($_POST['submitnewlink'])) { // Handle the form.
 		$linkdescription = FALSE;
 		$message .= '<p>Your link needs a short description.</p>';
 	} else {
-		$linkdescription = escape_data($_POST['linkdescription']);
+		$linkdescription = trim($_POST['linkdescription']);
 	}
-	
 	
 	$linkcategories = NULL;
 	if (isset($_POST['categoryid'])) {
-	
 		foreach ($_POST['categoryid'] as $key => $value) {
-		
 			$linkcategories .= "$value, ";
-		
 		}
-	
 		$linkcategories = substr($linkcategories, 0, -2);
-		
-		}
-		
-		else {
-		
-			$linkcategories = NULL;
-			echo "<p>No categories have been selected.</p>";
-		
-		}
+    }
+    else {
+        $linkcategories = NULL;
+        echo "<p>No categories have been selected.</p>";
+    }
 	
 	if ($linkname && $linkdescription && $linkurl && $linkcategories) {
-
-		$linksubmission = "INSERT INTO links (name, description, link, category) VALUES ('$linkname', '$linkdescription', '$linkurl', '$linkcategories')";
-		$result = @mysql_query ($linksubmission);
-
-		if ($result) {
-
+        $database->query('INSERT INTO `links` (`name`, `description`, `link`, `category`) VALUES (:linkname, :linkdescription, :linkurl, :linkcategories)');
+        $database->bind(':linkname', $linkname);
+        $database->bind(':linkdescription', $linkdescription);
+        $database->bind(':linkurl', $linkurl);
+        $database->bind(':linkcategories', $linkcategories);
+        $database->execute();
+        
+        if ($database->rowCount() == 1) {
 			echo "The link was successfully entered into the database";
-
-		}
-
-	}
-
+        }
+    }
 	else {
-
 		echo "There are problems with your form. Please sort these out before continuing.<br/><br/>", $message;
-
-	}
+    }
 	
-}
+} // End of submitnewlink conditional
 
-?>
+$database->query('SELECT * FROM `links` ORDER BY :name');
+$database->bind(':name', 'name');
+$rows = $database->resultSet();
 
-
-
-
-
-<?php
-
-$query = "SELECT * FROM links ORDER BY 'name'";
-$result = @mysql_query($query);
-$num = mysql_num_rows($result);
-if ($num > 0) {
-
+if ($database->rowCount() > 0) {
 	echo "<table>
 	<tr>
 	<td><strong>Name</strong></td>
@@ -144,9 +106,7 @@ if ($num > 0) {
 	<td><strong>Edit</strong></td>
 	<td><strong>Delete</strong></td>
 	</tr>";
-
-	while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-	
+    foreach ($rows as $row) {	
 		echo "<tr>
 		<td>".$row['name']."</td>
 		<td><a href=\"".$row['link']."\">".$row['link']."</a></td>
@@ -155,48 +115,34 @@ if ($num > 0) {
 		<td><a href=\"edit_link.php?action=edit&amp;id=".$row['id']."\">Edit</a></td>
 		<td><a href=\"edit_link.php?action=delete&amp;id=".$row['id']."\">Delete</a></td>
 		</tr>";
-	
-	}
-
-	echo "</table>";
-
+    }
+    echo "</table>";
 }
 
-?>
+$database->query('SELECT * FROM `categories` WHERE `type` = :link');
+$database->bind(':link', 'link');
+$rows = $database->resultSet();
 
-<?php
-
-$catquery = "SELECT * FROM categories WHERE type = 'link'";
-$catresult = @mysql_query($catquery);
-$num = mysql_num_rows($catresult);
-if ($num > 0) {
-
+if ($database->rowCount() > 0) {
 	echo "<table>
 	<tr>
 	<td><strong>Category</strong></td>
 	<td><strong>Edit</strong></td>
 	<td><strong>Delete</strong></td>
 	</tr>";
-
-	while ($row = mysql_fetch_array($catresult, MYSQL_ASSOC)) {
-	
+    foreach ($rows as $row) {	
 		echo "<tr>
 		<td>".$row['name']."</td>
 		<td><a href=\"edit_category.php?action=edit&amp;id=".$row['id']."\">Edit</a></td>
 		<td><a href=\"edit_category.php?action=delete&amp;id=".$row['id']."\">Delete</a></td>
 		</tr>";
-	
 	}
-
 	echo "</table>";
-
 }
 
 ?>
 
-
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="newlink">
+<form action="<?php echo "/".$page; ?>" method="post" id="newlink">
 
 <fieldset>
 
@@ -206,20 +152,20 @@ if ($num > 0) {
 <tr>
 
 <td><label>Link</label></td>
-<td><input type="text" name="linkurl" size="50" tabindex="1" value="<?php echo $_POST['linkurl']; ?>" id="url" /></td>
+<td><input type="text" name="linkurl" size="50" tabindex="1" value="<?php if (isset($_POST['linkurl'])) { echo $_POST['linkurl']; } ?>" id="url" /></td>
 
 </tr>
 <tr>
 
 <td><label>Name</label></td>
-<td><input type="text" name="linkname" size="50" tabindex="1" value="<?php echo $_POST['linkname']; ?>" id="name" /></td>
+<td><input type="text" name="linkname" size="50" tabindex="1" value="<?php if (isset($_POST['linkname'])) { echo $_POST['linkname']; } ?>" id="name" /></td>
 
 </tr>
 <tr>
 
 <td><label>Description</label></td>
 
-<td><input type="text" name="linkdescription" size="50" tabindex="1" value="<?php echo $_POST['linkdescription']; ?>" id="description" /></td>
+<td><input type="text" name="linkdescription" size="50" tabindex="1" value="<?php if (isset($_POST['linkdescription'])) { echo $_POST['linkdescription']; } ?>" id="description" /></td>
 
 </tr>
 <tr>
@@ -230,21 +176,15 @@ if ($num > 0) {
 
 <?php
 
-$linkquery = "SELECT * FROM categories WHERE type = 'link'";
-
-$result = @mysql_query ($linkquery); // Run the query through the database
-
-if ($result) { // If anything is found
-
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-$category = $row['name'];
-$categoryvalue = $row['id'];
-
-echo "<input type=\"radio\" name=\"categoryid[]\" value=\"".$categoryvalue."\" />".$category."<br/>", "\n";
-
-}
-
+$database->query('SELECT * FROM `categories` WHERE `type` = :link');
+$database->bind(':link', 'link');
+$rows = $database->resultSet();
+if ($database->rowCount() > 0) {
+    foreach ($rows as $row) {
+        $category = $row['name'];
+        $categoryvalue = $row['id'];
+        echo "<input type=\"radio\" name=\"categoryid[]\" value=\"".$categoryvalue."\" />".$category."<br/>", "\n";
+    }
 }
 
 ?>
@@ -262,8 +202,7 @@ echo "<input type=\"radio\" name=\"categoryid[]\" value=\"".$categoryvalue."\" /
 
 <br/><br/>
 
-
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" id="newcategory">
+<form action="<?php echo "/".$page; ?>" method="post" id="newcategory">
 
 <fieldset>
 
@@ -282,27 +221,20 @@ echo "<input type=\"radio\" name=\"categoryid[]\" value=\"".$categoryvalue."\" /
 <td>
 
 <?php
-	$linkquery = "SELECT * FROM categories WHERE type='link'";
 
-	$result = @mysql_query ($linkquery); // Run the query through the database
-
-	if ($result) { // If anything is found
-
+$database->query('SELECT * FROM `categories` WHERE `type`=:link');
+$database->bind(':link', 'link');
+$rows = $database->resultSet();
+if ($database->rowCount() > 0) {
 		echo "<select name=\"parent\" size=\"1\">\n";
 		echo "<option value=\"0\">None</option>\n";
-
-		while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
+    foreach ($rows as $row) {
 			$value = $row['id'];
 			$name = $row['name'];
-
 			echo "<option value=\"$value\">$name</option>\n";
-
-		}
-
-		echo "</select>\n";
-
-	}
+    }
+    echo "</select>\n";
+}
 	
 ?>
 

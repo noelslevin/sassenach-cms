@@ -1,5 +1,10 @@
 <?php
 
+$message = NULL;
+$parentpage = NULL;
+$content = NULL;
+$author = $_SESSION['user_id'];
+
 echo "<script language=\"javascript\" type=\"text/javascript\" src=\"".$globalhome.$backend."/tinymce/jscripts/tiny_mce/tiny_mce.js\"></script>
 <script language=\"javascript\" type=\"text/javascript\">
 tinyMCE.init({
@@ -13,30 +18,18 @@ tinyMCE.init({
 });
 </script>\n";
 
-if (isset($_POST['content'])) { // Handle the form.
-
-	// Create a function for escaping the data.
-	function escape_data ($data) {
-		global $dbh; // Need the connection.
-		if (ini_get('magic_quotes_gpc')) {
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data, $dbh);
-	} // End of function.
-
-	$message = NULL; // Create an empty new variable.
+if (isset($_POST['submitnewpage'])) { // Handle the form
 	
 	// Check post or page name.
 	if (empty($_POST['title'])) {
 		$title = FALSE;
 		$message .= '<p>Your post or page needs a title.</p>';
-	} else {
-		$title = escape_data($_POST['title']);
-		$url = $title;
-		$url = strtolower($url);
+	} 
+    else {
+		$title = trim($_POST['title']);
+		$url = strtolower($title);
 		$url = str_replace(" ", "-", $url);
 		$url = ereg_replace("[^A-Za-z0-9-]", "", $url);
-
 	}
 	
 	// Check for content to the post or page.
@@ -44,61 +37,46 @@ if (isset($_POST['content'])) { // Handle the form.
 		$content = FALSE;
 		$message .= '<p>Your post or page is blank. This is not allowed. Please write something for people to read!</p>';
 	}
-
-	else if ($_POST['content']== '<p>&nbsp;</p>') {
-	
+	elseif ($_POST['content']== '<p>&nbsp;</p>') {
 		$message.= '<p>Your post or page is blank. This is not allowed. Please write something for people to read!</p>';
-	
 	}
-	
 	 else {
-		$content = trim(escape_data($_POST['content']));
-
+		$content = trim($_POST['content']);
 	}
 
-	$parentpage = NULL;
 	if (isset($_POST['parentpage'])) {
-	
-		foreach ($_POST['parentpage'] as $key => $value) {
-		
+        foreach ($_POST['parentpage'] as $key => $value) {		
 			$parentpage .= "$value, ";
-		
 		}
-	
 		$parentpage = substr($parentpage, 0, -2);
-		
-		}
+    }
 		
     $status = $_POST['status'];
-
-	
-	// Check for an author. It should not be possible to fail this test!
-	if (empty($_POST['author'])) {
-		$author = FALSE;
-		$message .= '<p>This post appears to have no author. This is not possible! A critical error has occurred. Please inform the application developer immediately.</p>';
-	} else {
-		$author = escape_data($_POST['author']);
-	}
+    $timestamp = time();
 	
 	if ($title && $content && $author) { // Tests to see that everything is filled in correctly.
 		
 		// Make the query.
-		$query = "INSERT INTO pages (author, timestamp, title, content, parent, status, url) VALUES ('$author', NOW(), '$title', '$content', '$parentpage', '$status', '$url')";		
-		$result = @mysql_query ($query); // Run the query.
-		if ($result) { // If it ran OK.
-		
-			// Inform the user.
+        $database->query('INSERT INTO `pages` (`author`, `timestamp`, `title`, `content`, `parent`, `status`, `url`) VALUES (:author, FROM_UNIXTIME(:timestamp), :title, :content, :parentpage, :status, :url)');
+        $database->bind(':author', $author);
+        $database->bind(':timestamp', $timestamp);
+        $database->bind(':title', $title);
+        $database->bind(':content', $content);
+        $database->bind(':parentpage', $parentpage);
+        $database->bind(':status', $status);
+        $database->bind(':url', $url);
+        $database->execute();
+        
+        if ($database->rowCount() == 1) {
 			echo '<h1>Post Successful</h1>';
 			echo '<p>Your post was successfully submitted to the database. Hurrah!</p>';
 
-include ('../includes/footer.php'); // Include the HTML footer.
+            include $_SERVER['DOCUMENT_ROOT'].'/backend/includes/footer.php'; // Include the HTML footer.
 			exit(); // Quit the script.
 			
 		} else { // If it did not run OK.
-			$message = '<p>Your database submission was unsuccessful. Details are given below.</p><p>' . mysql_error() . '</p>'; 
+			$message .= '<p>Your database submission was unsuccessful. Details are given below.</p><p>' . mysql_error() . '</p>'; 
 		}
-		
-		mysql_close(); // Close the database connection.
 
 	} else {
 		$message .= '<p>These issues must be rectified before your submission to the database is successful.</p>';		
@@ -113,7 +91,7 @@ if (isset($message)) {
 
 echo "<div id=\"tinymce\">
 
-<form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\" id=\"write\">
+<form action=\"/".$page."\" method=\"post\" id=\"write\">
 
 <fieldset>
 
@@ -126,27 +104,17 @@ echo "<div id=\"tinymce\">
 
 <label>Parent Page</label><br/><br/>\n";
 
-$pagequery = "SELECT * FROM pages";
-
-$result = @mysql_query ($pagequery); // Run the query through the database
-$num = mysql_num_rows ($result);
-if ($num > 0) {
-
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-$page_title= $row['title'];
-$page_id = $row['id'];
-
-echo "<input type=\"checkbox\" name=\"parentpage[]\" value=\"".$page_id."\" tabindex=\"3\"/>".$page_title."<br/>\n";
-
+$database->query('SELECT * FROM `pages`');
+$rows = $database->resultSet();
+if ($database->rowCount() > 0) {
+    foreach ($rows as $row) {
+        $page_title= $row['title'];
+        $page_id = $row['id'];
+        echo "<input type=\"checkbox\" name=\"parentpage[]\" value=\"".$page_id."\" tabindex=\"3\"/>".$page_title."<br/>\n";
+    }
 }
-
-}
-
 else {
-
     echo "<p>There are no pages. This must be a parent page.</p>";
-
 }
 
 echo "<br/>
@@ -159,23 +127,17 @@ echo "<br/>
 <br/>
 <br/>
 
-<input type=\"submit\" name=\"content\" value=\"Save\" />
-
-<input type=\"hidden\" name=\"author\" value=\"".$_SESSION['user_id']."\" />
+<input type=\"submit\" name=\"submitnewpage\" value=\"Save\" />
 
 </div>
 
 <textarea name=\"content\" id=\"post\" class=\"mceEditor\" cols=\"130\" rows=\"25\">\n";
 
-	if (isset($_POST['content'])) { 
+if (isset($_POST['content'])) {
+    echo $_POST['content'];
+}
 	
-	$content = $_POST['content']; 
-	
-	$content = stripslashes($content);
-	
-	echo $content; }
-	
-	echo "</textarea>
+echo "</textarea>
 
 </fieldset>
 
