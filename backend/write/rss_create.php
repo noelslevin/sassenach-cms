@@ -1,6 +1,7 @@
     <?php
+
     // open a file pointer to an RSS file
-    $fp = fopen ("../../rss.xml", "w");
+    $fp = fopen ($_SERVER['DOCUMENT_ROOT']."/rss.xml", "w");
 
     // Now write the header information
     fwrite ($fp, "<?xml version=\"1.0\" ?>\n<rss version=\"2.0\" xmlns:atom=\"http://www.w3.org/2005/Atom\">\n<channel>\n");
