@@ -1,5 +1,8 @@
 <?php
 
+$message = NULL;
+$postcategories = NULL;
+
 echo "<script language=\"javascript\" type=\"text/javascript\" src=\"".$globalhome.$backend."/tinymce/jscripts/tiny_mce/tiny_mce.js\"></script>
 <script language=\"javascript\" type=\"text/javascript\">
 tinyMCE.init({
@@ -14,99 +17,94 @@ tinyMCE.init({
 </script>\n";
 
 if (isset($_POST['content'])) { // Handle the form.
-
-	// Create a function for escaping the data.
-	function escape_data ($data) {
-		global $dbh; // Need the connection.
-		if (ini_get('magic_quotes_gpc')) {
-			$data = stripslashes($data);
-		}
-		return mysql_real_escape_string($data, $dbh);
-	} // End of function.
-
-	$message = NULL; // Create an empty new variable.
 	
 	// Check post or page name.
 	if (empty($_POST['title'])) {
 		$title = FALSE;
-		$message .= '<p>Your post or page needs a title.</p>';
-	} else {
-		$title = escape_data($_POST['title']);
-		$url = $title;
-		$url = strtolower($url);
+        $message .= '<p>Your post or page needs a title.</p>';
+    }
+    else {
+		$title = trim($_POST['title']);
+		$url = strtolower($title);
 		$url = str_replace(" ", "-", $url);
 		$url = ereg_replace("[^A-Za-z0-9-]", "", $url);
-
-	}
+    }
 	
 	// Check for content to the post or page.
 	if (empty($_POST['content'])) {
 		$content = FALSE;
 		$message .= '<p>Your post or page is blank. This is not allowed. Please write something for people to read!</p>';
 	}
-
-	else if ($_POST['content']== '<p>&nbsp;</p>') {
-	
+	elseif ($_POST['content']== '<p>&nbsp;</p>') {
+        $content = FALSE;
 		$message.= '<p>Your post or page is blank. This is not allowed. Please write something for people to read!</p>';
-	
-	}
-	
+    }
 	 else {
-		$content = trim(escape_data($_POST['content']));
-
-	}
-
-	$postcategories = NULL;
-	if (isset($_POST['categories'])) {
+		$content = trim($_POST['content']);
+     }
 	
-		foreach ($_POST['categories'] as $key => $value) {
-		
-			$postcategories .= "$value, ";
-		
-		}
-	
+    if (isset($_POST['categories'])) {
+        foreach ($_POST['categories'] as $key => $value) {
+            $postcategories .= "$value, ";
+        }
 		$postcategories = substr($postcategories, 0, -2);
-		
-		}
-		
-		else {
-		
-			$postcategories = 1;
-		
-		}
-   $frontpage = $_POST['frontpage'];
-	$status = $_POST['status'];
-
+    }
+    else {
+        // Assign to the General category
+        $postcategories = 1;
+    }
+    
+    if (isset($_POST['frontpage'])) {
+        $frontpage = $_POST['frontpage'];
+    }
+    else {
+        // Do not display on homepage
+        $frontpage = 'no';
+    }
+    
+    if (isset($_POST['status'])) {
+        $status = $_POST['status'];
+    }
+    else {
+        // Do not publish
+        $status = 'draft';
+    }
+    
+    if ($status == 'published') {
+        // Only set timestamp if publishing
+        $timestamp = time();
+    }
+    else {
+        $timestamp = NULL;
+    }
 	
-	// Check for an author. It should not be possible to fail this test!
-	if (empty($_POST['author'])) {
-		$author = FALSE;
-		$message .= '<p>This post appears to have no author. This is not possible! A critical error has occurred. Please inform the application developer immediately.</p>';
-	} else {
-		$author = escape_data($_POST['author']);
-	}
-	
-	if ($title && $content && $author && $postcategories) { // Tests to see that everything is filled in correctly.
-		
-		// Make the query.
-		$query = "INSERT INTO posts (author, timestamp, title, content, categories, status, url, frontpage) VALUES ('$author', NOW(), '$title', '$content', '$postcategories', '$status', '$url', '$frontpage')";		
-		$result = @mysql_query ($query); // Run the query.
-		if ($result) { // If it ran OK.
-		
-			// Inform the user.
+	if ($title && $content && $postcategories && $status && $frontpage && $url) { // Tests to see that everything is filled in correctly.
+        $database->query('INSERT INTO `posts` (`title`, `url`, `content`, `categories`, `frontpage`, `status`, `author`, `published`) VALUES (:title, :url, :content, :categories, :frontpage, :status, :author, FROM_UNIXTIME(:timestamp))');
+        $database->bind(':title', $title);
+        $database->bind(':url', $url);
+        $database->bind(':content', $content);
+        $database->bind(':categories', $postcategories);
+        $database->bind(':frontpage', $frontpage);
+        $database->bind(':status', $status);
+        $database->bind(':author', $_SESSION['user_id']);
+        $database->bind(':timestamp', $timestamp);
+        $database->execute();
+        
+        if ($database->rowCount() == 1) {
+            // Inform the user.
 			echo '<h1>Post Successful</h1>';
 			echo '<p>Your post was successfully submitted to the database. Hurrah!</p>';
-			include '../rss_create.php';
-include ('../includes/footer.php'); // Include the HTML footer.
+			include 'rss_create.php';
+            include $_SERVER['DOCUMENT_ROOT'].'/backend/includes/footer.php'; // Include the HTML footer.
 			exit(); // Quit the script.
-			
-		} else { // If it did not run OK.
-			$message = '<p>Your database submission was unsuccessful. Details are given below.</p><p>' . mysql_error() . '</p>'; 
+        }
+        
+        else { // If it did not run OK.
+			$message = '<p>Your database submission was unsuccessful.</p>'; 
 		}
-		
-		mysql_close(); // Close the database connection.
-
-	} else {
+    }
+    
+    else {
 		$message .= '<p>These issues must be rectified before your submission to the database is successful.</p>';		
 	}
 
@@ -119,7 +117,7 @@ if (isset($message)) {
 
 echo "<div id=\"tinymce\">
 
-<form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\" id=\"write\">
+<form action=\"/".$page."\" method=\"post\" id=\"write\">
 
 <fieldset>
 
@@ -132,60 +130,42 @@ echo "<div id=\"tinymce\">
 
 <label>Categories</label><br/><br/>\n";
 
-$linkquery = "SELECT * FROM categories WHERE type='post' ORDER BY name ASC";
-
-$result = @mysql_query ($linkquery); // Run the query through the database
-
-if ($result) { // If anything is found
-
-while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-$category = $row['name'];
-$categoryid = $row['id'];
-
-echo "<input type=\"checkbox\" name=\"categories[]\" value=\"".$categoryid."\" tabindex=\"3\"/>".$category."<br/>\n";
-
-}
-
+$database->query('SELECT * FROM `categories` WHERE `type`=:post ORDER BY `name` ASC');
+$database->bind(':post', 'post');
+$rows = $database->resultSet();
+if ($database->rowCount() > 0) {
+    foreach ($rows as $row) {
+        $category = $row['name'];
+        $categoryid = $row['id'];
+        echo "<input type=\"checkbox\" name=\"categories[]\" value=\"".$categoryid."\" tabindex=\"3\"/>".$category."<br/>\n";
+    }
 }
 
 echo "<br/>
 
 <label>Status</label><br/><br/>
 
-<input type=\"radio\" name=\"status\" value=\"draft\" checked=\"checked\" tabindex=\"4\"/>Draft
-<br/>
-<input type=\"radio\" name=\"status\" value=\"published\" tabindex=\"4\"/>Published
-<br/>
-<br/>
+<input type=\"radio\" name=\"status\" value=\"draft\" checked=\"checked\" tabindex=\"4\"/>Draft<br/>
+
+<input type=\"radio\" name=\"status\" value=\"published\" tabindex=\"4\"/>Published<br/><br/>
 
 <label>Frontpage Post?</label><br/><br/>
-                        
-                        <input type=\"radio\" name=\"frontpage\" value=\"yes\" tabindex=\"4\"/>Yes
-                        <br/>
-                        
-                        <input type=\"radio\" name=\"frontpage\" value=\"no\" checked=\"checked\" tabindex=\"4\"/>No
-                        <br/>
-                        
-                        <br/>
 
-<input type=\"submit\" name=\"content\" value=\"Save\" />
+<input type=\"radio\" name=\"frontpage\" value=\"yes\" tabindex=\"4\"/>Yes<br/>
 
-<input type=\"hidden\" name=\"author\" value=\"".$_SESSION['user_id']."\" />
+<input type=\"radio\" name=\"frontpage\" value=\"no\" checked=\"checked\" tabindex=\"4\"/>No<br/><br/>
+
+<input type=\"submit\" name=\"submitnewpost\" value=\"Save\" />
 
 </div>
 
 <textarea name=\"content\" id=\"post\" class=\"mceEditor\" cols=\"130\" rows=\"25\">\n";
 
-	if (isset($_POST['content'])) { 
+if (isset($_POST['content'])) {
+    echo $_POST['content'];
+}
 	
-	$content = $_POST['content']; 
-	
-	$content = stripslashes($content);
-	
-	echo $content; }
-	
-	echo "</textarea>
+echo "</textarea>
 
 </fieldset>
 
