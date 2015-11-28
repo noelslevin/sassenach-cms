@@ -33,7 +33,12 @@ if (isset($_POST['submit'])) {
 				fwrite ($fp, "\$dbhostname = \"$db_hostname\";\n\n");
 				fwrite ($fp, "\$dbh = @mysql_connect(\$dbhostname, \$dbusername, \$dbpassword)\n");
 				fwrite ($fp, "or die (\"Unable to connect to MySQL.\");\n\n");
-				fwrite ($fp, "mysql_select_db ('$db_name')\n\n");
+				fwrite ($fp, "mysql_select_db ('$db_name');\n\n");
+        fwrite ($fp, "define(\"DB_HOST\", \"$db_hostname\");\n");
+        fwrite ($fp, "define(\"DB_USER\", \"$db_user\");\n");
+        fwrite ($fp, "define(\"DB_PASS\", \"$db_password\");\n");
+        fwrite ($fp, "define(\"DB_NAME\", \"$db_name\");\n");
+        fwrite ($fp, "include 'database.class.php';\n\n");
 				fwrite ($fp, "?>");
 				fclose ($fp);
 				
