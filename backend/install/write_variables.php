@@ -7,9 +7,11 @@ if ($fp) {
     fwrite ($fp, "<?php\n");
 
     $query = "SELECT * FROM options";
-    $result = @mysql_query($query);
+    $database->query($query);
+    $database->execute();
 
-    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+    $rows = $database->resultset();
+    foreach ($rows as $row) {
         $variable = addslashes($row['variable']);
         $value = addslashes($row['value']);
         $function = addslashes($row['function']);

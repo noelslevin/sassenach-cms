@@ -13,24 +13,24 @@ $pagetitle="Install Sassenach CMS: Site Details";
 <?php
 
 if (isset($_POST['submit'])) {
-	include ('../../includes/connection.php');
+	include ('../../includes/db-config.php');
+	include ('../../includes/database.class.php');
 	$sitename = $_POST['sitename'];
 	$siteaddress = $_POST['siteaddress'];
 	$query = "UPDATE options SET value='$siteaddress' WHERE id=1"; 
 	$query2 = "UPDATE options SET value='$sitename' WHERE id=3";
 	
-	$result = @mysql_query($query);
-	$result2 = @mysql_query($query2);
-	if ($result && $result2) {
-		echo "<p>The details were successfully updated in the database.</p>";
-		include ('write_variables.php');
-        if ($fp) {
-            echo "<p><a href=\"new_user.php\">Continue</a></p>";
-        }
-		}
-	else {
-		echo "<p>The variables were not set. Have you really set up the database connection and filled the database?";
-		}
+	$database->query($query);
+	$database->execute();
+
+	$database->query($query2);
+	$database->execute();
+
+	echo "<p>The details were successfully updated in the database.</p>";
+	include ('write_variables.php');
+	if ($fp) {
+		echo "<p><a href=\"new_user.php\">Continue</a></p>";
+	}
 
 	}
 

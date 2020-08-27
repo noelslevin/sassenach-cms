@@ -62,17 +62,18 @@ if (isset($_POST['submit'])) {
 	}
 	
 	if ($firstname && $lastname && $email && $username && $password) { // Tests to see that everything is filled in correctly.
-		include ('../../includes/connection.php');		
+		include ('../../includes/db-config.php');
+		include ('../../includes/database.class.php');
 		// Make the query.
 		$query = "INSERT INTO users (username, firstname, lastname, email, password, registered) VALUES ('$username', '$firstname', '$lastname', '$email', '$password', NOW() )";		
-		$result = @mysql_query ($query); // Run the query.
-		if ($result) { // If it ran OK.
+		$database->query($query); // Run the query.
+		$database->execute();
+		if ($database->rowCount() > 0) { // If it ran OK.
 	echo "<p>The user was successfully added to the database.</p>";
 	echo "<p><a href=\"finished.php\">Continue</a></p>";
 	}
 	else {
 	echo "<p>The user could not be added.</p>";
-	echo "<p>".mysql_error()."</p>";
 	}
 	
 	}

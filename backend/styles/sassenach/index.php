@@ -2,21 +2,19 @@
 
 $id = 0;
 $feedquery = "SELECT * FROM categories WHERE parent='yes' AND type='post' ORDER BY 'id' ASC";
-$feedresult = @mysql_query ($feedquery);
-$feednum = @mysql_num_rows ($feedresult);
-if ($feednum > 0) {
+$database->query($feedquery);
+$database->execute();
+if ($database->rowCount() > 0) {
 
-    while ($feedrow = mysql_fetch_array ($feedresult, MYSQL_ASSOC)) {
-
-
+    $rows = $database->resultSet();
+    foreach ($rows as $feedrow) {
         $category_id = $feedrow['id'];
         $postquery = "SELECT * FROM posts WHERE status = 'published' AND categories = '$category_id' OR categories LIKE '%, $category_id' OR categories LIKE '$category_id,%' OR categories LIKE '%, $category_id,%' ORDER BY timestamp DESC LIMIT 0,1";
-        $postresult = @mysql_query ($postquery);
-        $postnum = @mysql_num_rows ($postresult);
-        if ($postnum == 1) {
-        
-            while ($postrow = mysql_fetch_array ($postresult, MYSQL_ASSOC)) {
-                
+        $database->query($postquery);
+        $database->execute();
+        if ($database->rowCount() == 1) {
+            $postrows = $database->resultSet();
+            foreach ($postrows as $postrow) {    
                 $year = substr($postrow['timestamp'], 0, 4);
                 $month = substr($postrow['timestamp'], 5, 2);
                 $day = substr($postrow['timestamp'], 8, 2);

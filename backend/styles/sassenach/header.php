@@ -31,13 +31,13 @@
 <?php
 
 $query = "SELECT * FROM pages WHERE parent='0' AND status='published' ORDER BY title ASC";
-$result = @mysql_query ($query);
-$num = @mysql_num_rows ($result);
-if ($num > 0) {
+$database->query($query);
+$database->execute();
+if ($database->rowCount() > 0) {
 
-    while ($row = mysql_fetch_array ($result, MYSQL_ASSOC)) {
+    $rows = $database->resultSet();
+    foreach ($rows as $row) {
         echo "<li><a href=\"".$globalhome.$row['url']."/\">".$row['title']."</a></li>\n";
-    
     }
 
 }

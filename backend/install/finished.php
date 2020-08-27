@@ -13,10 +13,12 @@ $pagetitle="Install Sassenach CMS: Installation Complete";
 <?php
 
 if (isset($_POST['submit'])) {
-	include ('../../includes/connection.php');
+	include ('../../includes/db-config.php');
+	include ('../../includes/database.class.php');
 	$query = "UPDATE options SET value='up' WHERE id=20";
-	$result = @mysql_query ($query);
-	if ($result) {
+	$database->query($query);
+	$database->execute();
+	if ($database->rowCount() > 0) {
 		include ('write_variables.php');
 		include '../../includes/variables.php';
 		echo "<p>And we're done. Easy, eh?</p>";
