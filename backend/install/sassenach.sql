@@ -92,8 +92,8 @@ CREATE TABLE IF NOT EXISTS `pages` (
   `title` text NOT NULL,
   `url` varchar(100) NOT NULL default '',
   `author` mediumint(8) NOT NULL default '0',
-  `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',
-  `updated` datetime NULL default '0000-00-00 00:00:00',
+  `timestamp` datetime default NULL,
+  `updated` datetime default NULL,
   `status` enum('draft','published') NOT NULL default 'draft',
   `parent` mediumint(8) NOT NULL default '0',
   `content` longtext NOT NULL,
@@ -105,7 +105,7 @@ DROP TABLE IF EXISTS `posts`;
 CREATE TABLE IF NOT EXISTS `posts` (
   `post_id` mediumint(8) unsigned NOT NULL auto_increment,
   `author` mediumint(8) NOT NULL default '0',
-  `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',
+  `timestamp` datetime default NULL,
   `updated` datetime default NULL,
   `categories` varchar(255) NOT NULL default '1' COMMENT 'Each number refers to the relevant category id in the ''categories'' table.',
   `status` enum('draft','published') NOT NULL default 'draft',
@@ -124,8 +124,8 @@ CREATE TABLE IF NOT EXISTS `todo` (
   `status` enum('Implemented','In Progress','Stalled') NOT NULL default 'Implemented',
   `importance` enum('5','4','3','2','1') NOT NULL default '5',
   `author` mediumint(8) NOT NULL,
-  `timestamp` datetime NOT NULL default '0000-00-00 00:00:00',
-  `updated` datetime NULL,
+  `timestamp` datetime default NULL,
+  `updated` datetime default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(20) NOT NULL default '',
   `password` varchar(255) NOT NULL default '',
   `email` varchar(40) NOT NULL default '',
-  `registered` datetime NOT NULL default '0000-00-00 00:00:00',
+  `registered` datetime default NULL,
   `string` char(32) NULL,
   PRIMARY KEY  (`user_id`),
   UNIQUE KEY `username` (`username`)
