@@ -84,6 +84,10 @@ class Database {
     public function debugDumpParams() {
         return $this->stmt->debugDumpParams();
     }
+
+    public function returnError() {
+        return $this->error;
+    }
     
 }
 
