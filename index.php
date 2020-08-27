@@ -10,7 +10,8 @@ function get_sassenach_function($function) {
 	include $sassenach_function;
 	}
 
-include 'includes/connection.php';
+include 'includes/db-config.php';
+include 'includes/database.class.php';
 include $backend.'styles/'.$style.'header.php';
 
 echo "<div class=\"content\">";

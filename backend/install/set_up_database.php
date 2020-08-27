@@ -13,7 +13,8 @@ $pagetitle="Install Sassenach CMS: Setting Up The Database";
 <?php
 
 if (isset($_POST['submit'])) {
-	include ('../../includes/connection.php');
+	include ('../../includes/db-config.php');
+	include ('../../includes/database.class.php');
   
   $sql = file_get_contents('sassenach.sql');
   $database->query($sql);

@@ -2,7 +2,8 @@
 
 if (isset($_POST['login'])) {
 	require_once ('../includes/variables.php');
-	require_once ('../includes/connection.php');
+    require_once ('../includes/db-config.php');
+    require_once ('../includes/database.class.php');
 
 	$message = NULL;
 	

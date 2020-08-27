@@ -14,7 +14,8 @@ function get_sassenach_function($function) {
 	}
 
 include '../includes/variables.php';
-include '../includes/connection.php';
+include '../includes/db-config.php';
+include '../includes/database.class.php';
 $pagetitle = $sitename;
 
 if (isset($_GET['page'])) {
