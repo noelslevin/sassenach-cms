@@ -14,16 +14,36 @@ $pagetitle="Install Sassenach CMS: Database Connection";
 
 if (isset($_POST['submit'])) {
 
+	require '../../includes/db-config.php';
+	require '../../includes/database.class.php';
+
+	if (strlen($database->returnError()) > 0) {
+		/* 
+		
+		Connection is not successful
+		Return settings form
+		Return code for db-config.php
+		
+		*/
+	}
+	else {
+		/* 
+		
+		Connection is successful
+		Move to the next page
+
+		*/
+		
+		echo "<p><a href=\"set_up_database.php\">Continue</a></p>";
+		
+	}
+
+	/*
 	$db_name = $_POST['db_name'];
 	$db_user = $_POST['db_user'];
 	$db_password = $_POST['db_password'];
 	$db_hostname = $_POST['db_hostname'];
-	
-	$dbh = @mysql_connect($db_hostname, $db_user, $db_password);
-	if ($dbh) {
-		echo "<p>User and password successfully connected. Attempting to connect to the database.</p>";
-		$db_connect = mysql_select_db ($db_name);
-		if ($db_connect) {
+
 			echo "<p>Connection successfully established. Now attempting to write database connection file.</p>";
 			$fp = @fopen ("../../includes/connection.php", "w");
 			if ($fp) {
@@ -42,9 +62,8 @@ if (isset($_POST['submit'])) {
 				fwrite ($fp, "?>");
 				fclose ($fp);
 				
-				echo "<p>The data was successfully written to the connection file.</p>";
+				echo "<p>The data was successfully written to the connection file.</p>";	
 				
-				echo "<p><a href=\"set_up_database.php\">Continue</a></p>";
 				}
 			else {
 				echo "<p>Could not write to file. You either need to make the connection file writeable, go back to the previous page and try again, or you should upload the file yourself. If you want to upload the file yourself, then copy the following text box into a plain text editor, save it as \"connection.php\" and upload it to \"includes/\" directory at the root of your Sassnenach installation.</p>\n\n";
@@ -65,7 +84,7 @@ if (isset($_POST['submit'])) {
 		echo "<p>Sorry, but the database connection could not be established.</p>";
 		echo "<p>".mysql_error()."</p>";
 		}
-
+*/
 ?>
 
 <?php
